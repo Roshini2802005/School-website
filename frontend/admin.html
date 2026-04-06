@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Azad Girls Matriculation Higher Secondary School</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    :root {
+      --navy: #0B2545;
+      --gold: #C9973A;
+      --gold-light: #e8b86d;
+      --white: #FFFFFF;
+      --off-white: #F8F9FC;
+      --gray-100: #EEF1F6;
+      --gray-300: #C5CCDA;
+      --gray-500: #7A869A;
+      --text: #1C2B3A;
+      --success: #27AE60;
+      --warning: #F39C12;
+      --error: #E74C3C;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--text); }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 240px;
+      background: var(--navy);
+      padding: 28px 20px;
+      display: flex; flex-direction: column;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 36px;
+      color: var(--white);
+    }
+    .sidebar-logo-icon {
+      width: 40px; height: 40px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .sidebar-logo-text { font-size: 0.9rem; font-weight: 600; line-height: 1.3; }
+    .sidebar-logo-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.88rem; font-weight: 500;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.2s;
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+    }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+    }
+    .sidebar-link.active { background: rgba(201,151,58,0.2); color: var(--gold); }
+
+    /* Main */
+    .main { margin-left: 240px; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-100);
+      padding: 18px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .topbar h1 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--navy); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--gray-500); }
+
+    /* Content */
+    .content { padding: 28px 32px; }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 20px 22px;
+      border: 1px solid var(--gray-100);
+      display: flex; align-items: flex-start; gap: 16px;
+    }
+    .stat-icon {
+      width: 46px; height: 46px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--navy); line-height: 1; margin-bottom: 2px; }
+    .stat-label { font-size: 0.78rem; color: var(--gray-500); }
+
+    /* Table Card */
+    .table-card {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--gray-100);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-header h2 { font-size: 1rem; font-weight: 600; color: var(--navy); }
+
+    .filter-btns { display: flex; gap: 6px; }
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--gray-300);
+      background: var(--white);
+      color: var(--gray-500);
+      transition: 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--off-white); }
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-500);
+    }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); font-size: 0.88rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(11,37,69,0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .badge-pending  { background: rgba(243,156,18,0.1);  color: var(--warning); }
+    .badge-reviewed { background: rgba(26,74,138,0.1);   color: #1a4a8a; }
+    .badge-contacted{ background: rgba(39,174,96,0.1);   color: var(--success); }
+
+    .action-btn {
+      padding: 5px 12px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--gray-300);
+      background: var(--white);
+      color: var(--text);
+      transition: 0.2s;
+      margin-right: 4px;
+    }
+    .action-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray-500);
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.9rem; }
+
+    .loading-row td { text-align: center; color: var(--gray-500); font-style: italic; padding: 40px; }
+
+    /* Refresh btn */
+    .refresh-btn {
+      padding: 8px 18px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .refresh-btn:hover { background: #13376e; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 32px;
+      width: 500px;
+      max-width: 94vw;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal h3 { font-family: 'Playfair Display', serif; color: var(--navy); margin-bottom: 20px; }
+    .modal-row { display: flex; gap: 12px; margin-bottom: 12px; }
+    .modal-field { flex: 1; }
+    .modal-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 3px; }
+    .modal-value { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    .modal-footer { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-100); }
+    .modal-close { padding: 10px 20px; background: var(--gray-100); border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🌅</div>
+    <div>
+      <div class="sidebar-logo-text">Sunrise School</div>
+      <div class="sidebar-logo-sub">Admin Dashboard</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-link active">📋 Enquiries</a>
+    <a class="sidebar-link" href="index.html" target="_blank">🏫 View Website</a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <h1>Admission Enquiries</h1>
+    <div class="topbar-right">
+      <span id="lastUpdated">—</span>
+      <button class="refresh-btn" onclick="loadEnquiries()">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(11,37,69,0.08)">📋</div>
+        <div>
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-label">Total Enquiries</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(243,156,18,0.1)">⏳</div>
+        <div>
+          <div class="stat-num" id="statPending">—</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(26,74,138,0.1)">👁️</div>
+        <div>
+          <div class="stat-num" id="statReviewed">—</div>
+          <div class="stat-label">Reviewed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(39,174,96,0.1)">✅</div>
+        <div>
+          <div class="stat-num" id="statContacted">—</div>
+          <div class="stat-label">Contacted</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enquiries Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <h2>All Enquiries</h2>
+        <div class="filter-btns">
+          <button class="filter-btn active" onclick="filterEnquiries('all', this)">All</button>
+          <button class="filter-btn" onclick="filterEnquiries('pending', this)">Pending</button>
+          <button class="filter-btn" onclick="filterEnquiries('reviewed', this)">Reviewed</button>
+          <button class="filter-btn" onclick="filterEnquiries('contacted', this)">Contacted</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Parent</th>
+            <th>Class</th>
+            <th>Phone</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="enquiriesBody">
+          <tr class="loading-row"><td colspan="8">Loading enquiries…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <h3>Enquiry Details</h3>
+    <div id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('show')">Close</button>
+      <button class="action-btn" id="modalMarkReviewed" style="background:var(--navy);color:white;border-color:var(--navy)">Mark Reviewed</button>
+      <button class="action-btn" id="modalMarkContacted" style="background:var(--success);color:white;border-color:var(--success)">Mark Contacted</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allEnquiries = [];
+  let activeFilter = 'all';
+
+  /* ─── Load Enquiries ──────────────────────────────────── */
+  async function loadEnquiries() {
+    document.getElementById('enquiriesBody').innerHTML =
+      '<tr class="loading-row"><td colspan="8">Loading…</td></tr>';
+
+    try {
+      const res = await fetch('/api/enquiry?limit=200');
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+
+      allEnquiries = data.data;
+      updateStats();
+      renderTable(activeFilter);
+
+      document.getElementById('lastUpdated').textContent =
+        'Updated: ' + new Date().toLocaleTimeString();
+    } catch (err) {
+      document.getElementById('enquiriesBody').innerHTML =
+        `<tr class="loading-row"><td colspan="8">⚠️ ${err.message || 'Failed to load enquiries. Is the server running?'}</td></tr>`;
+    }
+  }
+
+  /* ─── Update Stats ────────────────────────────────────── */
+  function updateStats() {
+    document.getElementById('statTotal').textContent = allEnquiries.length;
+    document.getElementById('statPending').textContent   = allEnquiries.filter(e => e.status === 'pending').length;
+    document.getElementById('statReviewed').textContent  = allEnquiries.filter(e => e.status === 'reviewed').length;
+    document.getElementById('statContacted').textContent = allEnquiries.filter(e => e.status === 'contacted').length;
+  }
+
+  /* ─── Render Table ────────────────────────────────────── */
+  function renderTable(filter) {
+    const filtered = filter === 'all' ? allEnquiries : allEnquiries.filter(e => e.status === filter);
+    const tbody = document.getElementById('enquiriesBody');
+
+    if (!filtered.length) {
+      tbody.innerHTML = `
+        <tr><td colspan="8">
+          <div class="empty-state">
+            <div class="icon">📭</div>
+            <p>No enquiries found${filter !== 'all' ? ' with status "' + filter + '"' : ''}.</p>
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((e, i) => `
+      <tr>
+        <td style="color:var(--gray-500)">${i + 1}</td>
+        <td><strong>${esc(e.studentName)}</strong></td>
+        <td>${esc(e.parentName)}</td>
+        <td>${esc(e.classApplying)}</td>
+        <td>${esc(e.phone)}</td>
+        <td>${new Date(e.createdAt).toLocaleDateString('en-IN')}</td>
+        <td><span class="badge badge-${e.status}">${capitalize(e.status)}</span></td>
+        <td>
+          <button class="action-btn" onclick="openModal('${e._id}')">👁 View</button>
+          ${e.status !== 'contacted' ? `<button class="action-btn" onclick="updateStatus('${e._id}', '${e.status === 'pending' ? 'reviewed' : 'contacted'}')">
+            ${e.status === 'pending' ? '✓ Review' : '📞 Contacted'}
+          </button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  /* ─── Filter ──────────────────────────────────────────── */
+  function filterEnquiries(filter, btn) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable(filter);
+  }
+
+  /* ─── Update Status ───────────────────────────────────── */
+  async function updateStatus(id, newStatus) {
+    try {
+      const res = await fetch(`/api/enquiry/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+
+      // Update local state
+      const idx = allEnquiries.findIndex(e => e._id === id);
+      if (idx !== -1) allEnquiries[idx].status = newStatus;
+
+      updateStats();
+      renderTable(activeFilter);
+      document.getElementById('modalOverlay').classList.remove('show');
+    } catch (err) {
+      alert('Failed to update status: ' + err.message);
+    }
+  }
+
+  /* ─── Modal ───────────────────────────────────────────── */
+  function openModal(id) {
+    const e = allEnquiries.find(x => x._id === id);
+    if (!e) return;
+
+    document.getElementById('modalBody').innerHTML = `
+      <div class="modal-row">
+        <div class="modal-field"><div class="modal-label">Student Name</div><div class="modal-value">${esc(e.studentName)}</div></div>
+        <div class="modal-field"><div class="modal-label">Class Applying</div><div class="modal-value">${esc(e.classApplying)}</div></div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field"><div class="modal-label">Parent Name</div><div class="modal-value">${esc(e.parentName)}</div></div>
+        <div class="modal-field"><div class="modal-label">Status</div><div class="modal-value"><span class="badge badge-${e.status}">${capitalize(e.status)}</span></div></div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-field"><div class="modal-label">Email</div><div class="modal-value"><a href="mailto:${esc(e.email)}" style="color:var(--navy)">${esc(e.email)}</a></div></div>
+        <div class="modal-field"><div class="modal-label">Phone</div><div class="modal-value"><a href="tel:${esc(e.phone)}" style="color:var(--navy)">${esc(e.phone)}</a></div></div>
+      </div>
+      <div class="modal-field" style="margin-bottom:12px"><div class="modal-label">Message</div><div class="modal-value" style="background:var(--off-white);padding:12px;border-radius:8px;font-size:0.85rem;color:var(--gray-500)">${esc(e.message) || 'No message provided.'}</div></div>
+      <div class="modal-row">
+        <div class="modal-field"><div class="modal-label">Submitted On</div><div class="modal-value">${new Date(e.createdAt).toLocaleString('en-IN')}</div></div>
+      </div>
+    `;
+
+    const reviewBtn = document.getElementById('modalMarkReviewed');
+    const contactBtn = document.getElementById('modalMarkContacted');
+    reviewBtn.onclick = () => updateStatus(id, 'reviewed');
+    contactBtn.onclick = () => updateStatus(id, 'contacted');
+    reviewBtn.style.display = e.status === 'pending' ? '' : 'none';
+    contactBtn.style.display = e.status !== 'contacted' ? '' : 'none';
+
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) {
+      document.getElementById('modalOverlay').classList.remove('show');
+    }
+  }
+
+  /* ─── Helpers ─────────────────────────────────────────── */
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // Initial load
+  loadEnquiries();
+</script>
+</body>
+</html>
