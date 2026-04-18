@@ -1,4 +1,4 @@
-# 🌅 Sunrise International School Website
+# 🌅 ABC School Website
 
 A complete, full-stack school website with an admission enquiry form, admin dashboard, and MongoDB backend.
 
@@ -181,4 +181,4 @@ pm2 save && pm2 startup
 
 ---
 
-Made with ❤️ for Sunrise International School
+Made with ❤️ for ABC School
